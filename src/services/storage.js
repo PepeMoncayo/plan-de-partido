@@ -12,7 +12,6 @@ export const isStorageRef = (v) => typeof v === 'string' && v.startsWith(PREFIX)
 // Redimensiona en un canvas (máx. maxSize px) y devuelve un Blob JPEG/PNG
 export function compressImage(file, maxSize = 400, quality = 0.85) {
   return new Promise((resolve, reject) => {
-    if (file.type === 'image/svg+xml') return resolve(file);
     const img = new Image();
     const url = URL.createObjectURL(file);
     img.onload = () => {
@@ -43,12 +42,12 @@ export const fileToDataUrl = (blob) =>
  * En modo demo (sin Supabase) devuelve un dataURL que solo vive en memoria.
  */
 export async function uploadImage(file, folder, { maxSize = 1200, maxBytes = 5 * 1024 * 1024, demo = false } = {}) {
-  if (!file.type.startsWith('image/')) throw new Error('El archivo debe ser una imagen');
+  if (!/^image\/(png|jpeg|webp|gif)$/.test(file.type)) throw new Error('Formato no admitido (usa PNG, JPG, WebP o GIF)');
   const blob = await compressImage(file, maxSize);
   if (blob.size > maxBytes) throw new Error(`La imagen supera ${Math.round(maxBytes / 1024)} KB`);
   if (demo || !supabase) return fileToDataUrl(blob);
 
-  const ext = blob.type === 'image/png' ? 'png' : blob.type === 'image/svg+xml' ? 'svg' : 'jpg';
+  const ext = blob.type === 'image/png' ? 'png' : 'jpg';
   const path = `${folder}/${crypto.randomUUID()}.${ext}`;
   const { error } = await supabase.storage.from(BUCKET).upload(path, blob, { contentType: blob.type });
   if (error) throw error;

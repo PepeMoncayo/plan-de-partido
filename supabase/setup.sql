@@ -170,6 +170,13 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
 
+-- Usuarios creados antes de instalar el trigger → perfil viewer
+insert into public.profiles (id, email, nombre, role)
+select id, email, split_part(email, '@', 1), 'viewer'
+from auth.users
+where email is not null
+on conflict (id) do nothing;
+
 -- ════════ supabase/migrations/0002_rls.sql ════════
 -- ═══════════════════════════════════════════════════════════════════
 -- Plan de Partido · Row Level Security
@@ -282,7 +289,7 @@ values (
   'media',
   false,
   5242880,  -- 5 MB
-  array['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/svg+xml']
+  array['image/png', 'image/jpeg', 'image/webp', 'image/gif']
 )
 on conflict (id) do update
   set public = excluded.public,

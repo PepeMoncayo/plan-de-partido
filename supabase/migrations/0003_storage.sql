@@ -10,7 +10,7 @@ values (
   'media',
   false,
   5242880,  -- 5 MB
-  array['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/svg+xml']
+  array['image/png', 'image/jpeg', 'image/webp', 'image/gif']
 )
 on conflict (id) do update
   set public = excluded.public,
