@@ -20,7 +20,7 @@ Abre http://localhost:5173 y pulsa **Ver demo**. Los datos de ejemplo se cargan 
 ## Configurar Supabase
 
 1. Crea un proyecto nuevo en https://supabase.com.
-2. En **SQL Editor**, ejecuta en este orden:
+2. En **SQL Editor**, pega y ejecuta `supabase/setup.sql` (junta las tres migraciones). También puedes ejecutarlas por separado en este orden:
    - `supabase/migrations/0001_schema.sql`: tablas y trigger de alta de usuarios.
    - `supabase/migrations/0002_rls.sql`: permisos (lectura para quien tenga sesión, escritura solo para admin).
    - `supabase/migrations/0003_storage.sql`: bucket privado `media` para imágenes.
