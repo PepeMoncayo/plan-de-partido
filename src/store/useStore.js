@@ -111,6 +111,16 @@ export const useStore = create((set, get) => {
       await get().setSessionUser(data.user);
     },
 
+    // Comprueba la contraseña actual antes de cambiarla, para que una sesión
+    // abierta en un ordenador ajeno no baste para quitarle la cuenta a nadie.
+    async changePassword(currentPassword, newPassword) {
+      const { email } = get().user;
+      const { error: authError } = await supabase.auth.signInWithPassword({ email, password: currentPassword });
+      if (authError) throw new Error('La contraseña actual no es correcta');
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+    },
+
     startDemo() {
       set({
         isDemo: true,

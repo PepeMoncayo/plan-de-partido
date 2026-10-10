@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { MoonIcon, SunIcon, ArrowRightOnRectangleIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { MoonIcon, SunIcon, ArrowRightOnRectangleIcon, XMarkIcon, KeyIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import { useStore } from '../store/useStore';
+import ChangePasswordModal from './ChangePasswordModal';
 
 const NAV = [
   { to: '/', label: 'Plantilla', end: true },
@@ -11,6 +13,7 @@ const NAV = [
 
 export default function Layout({ children }) {
   const { user, isDemo, darkMode, toggleDark, logout, error, clearError } = useStore();
+  const [passwordOpen, setPasswordOpen] = useState(false);
 
   return (
     <div className="min-h-screen">
@@ -40,6 +43,11 @@ export default function Layout({ children }) {
             <button className="btn-ghost p-2" onClick={toggleDark} aria-label="Cambiar tema">
               {darkMode ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
             </button>
+            {!isDemo && (
+              <button className="btn-ghost p-2" onClick={() => setPasswordOpen(true)} aria-label="Cambiar contraseña" title="Cambiar contraseña">
+                <KeyIcon className="h-5 w-5" />
+              </button>
+            )}
             <button className="btn-ghost p-2" onClick={logout} aria-label="Cerrar sesión">
               <ArrowRightOnRectangleIcon className="h-5 w-5" />
             </button>
@@ -64,6 +72,8 @@ export default function Layout({ children }) {
       )}
 
       <main className="mx-auto max-w-7xl px-4 py-6">{children}</main>
+
+      <ChangePasswordModal open={passwordOpen} onClose={() => setPasswordOpen(false)} />
     </div>
   );
 }
