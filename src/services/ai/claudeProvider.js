@@ -1,13 +1,6 @@
-/*
- * Proveedor real (pendiente). La API key NUNCA va en el navegador ni en variables VITE_*.
- *
- * Para activarlo:
- *  1. Crear api/ai.js (función de Vercel) que:
- *     - verifique el JWT de Supabase (igual que api/clip.js),
- *     - reciba { task, input } y llame al modelo con ANTHROPIC_API_KEY (variable de servidor),
- *     - pida la respuesta en JSON con la MISMA forma que devuelve mockProvider para cada tarea.
- *  2. Poner VITE_AI_PROVIDER=claude.
- */
+// Proveedor real: llama a api/ai.js (función de Vercel), que es quien tiene la
+// ANTHROPIC_API_KEY. La clave NUNCA va en el navegador ni en variables VITE_*.
+// Se activa con VITE_AI_PROVIDER=claude.
 import { supabase } from '../../lib/supabase';
 
 async function callServer(task, input) {
@@ -18,8 +11,9 @@ async function callServer(task, input) {
     headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
     body: JSON.stringify({ task, input }),
   });
-  if (!res.ok) throw new Error(`IA no disponible (${res.status})`);
-  return res.json();
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error || `IA no disponible (${res.status})`);
+  return body;
 }
 
 export const claudeProvider = {

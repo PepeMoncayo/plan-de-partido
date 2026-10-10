@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.133.0",
     "@distube/ytdl-core": "^4.16.12",
     "@heroicons/react": "^2.1.5",
     "@supabase/supabase-js": "^2.45.4",
